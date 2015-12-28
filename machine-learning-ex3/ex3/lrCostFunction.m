@@ -47,11 +47,15 @@ grad = zeros(size(theta));
 
 
 % =============================================================
-theta_val = repmat(theta(:)',k,1);
-mult = sum(X.*theta_val,2);
+mult = X*theta;
 h_theta = sigmoid(mult);
-err_val = h_theta-y;
-grad = 1/m*sum(X.*repmat(err_val,1,l),2);
+log_h = log(h_theta);
+log_one_minus_h = log(1-h_theta);
+J = 1/m*(sum(-1*y.*log_h-(1-y).*log_one_minus_h)) + lambda/2/m*sum(theta(2:end).^2);
+
+err_val = repmat(h_theta-y,1,l);
+grad(1) = 1/m*sum(err_val(:,1).*X(:,1));
+grad(2:end) = 1/m*sum(err_val(:,2:end).*X(:,2:end),1)'+lambda/m*theta(2:end);
 grad = grad(:);
 
 end
